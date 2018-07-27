@@ -22,6 +22,7 @@ class Runs extends Component {
         <Table.Cell><Duration duration={run.duration} /></Table.Cell>
         <Table.Cell><Distance distance={run.distance} metric={this.props.auth.user.unit} /></Table.Cell>
         <Table.Cell><Timezone date={run.created} timezone={this.props.auth.user.timezone} /></Table.Cell>
+        <Table.Cell><Button basic color='red' onClick={() => this.props.remove(run.id)}>Remover</Button></Table.Cell>
       </Table.Row>
     )
   }
@@ -30,7 +31,6 @@ class Runs extends Component {
       <div>
         <h1>Corridas</h1>
         <Button as={Link} to='/user/create-run'>Criar</Button>
-
         <Table celled>
           <Table.Header>
             <tr>
@@ -38,12 +38,21 @@ class Runs extends Component {
               <Table.HeaderCell>Duração(h:m:s)</Table.HeaderCell>
               <Table.HeaderCell>Distância</Table.HeaderCell>
               <Table.HeaderCell>Data</Table.HeaderCell>
+              <Table.HeaderCell>Ações</Table.HeaderCell>
             </tr>
           </Table.Header>
           <Table.Body>
-            { this.props.runs.data.map(this.renderRun) }
+            {!this.props.isLoading && this.props.runs.data.length > 0 &&
+              this.props.runs.data.map(this.renderRun) 
+            }
+            {this.props.runs.data.length <= 0 &&
+              <tr>
+                <td>Nenhum valor encontrado.</td>
+              </tr>
+            }
           </Table.Body>
         </Table>
+        
       </div>
     );
   }
@@ -59,6 +68,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     load: () => dispatch(ActionsCreators.getRunsRequest()),
+    remove: id => dispatch(ActionsCreators.removeRunRequest(id)),
   };
 }
 

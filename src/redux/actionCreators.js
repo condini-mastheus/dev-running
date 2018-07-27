@@ -16,9 +16,14 @@ export const { Types, Creators } = createActions({
   getRunsSuccess: ['runs'],
   getRunsFailure: null,
   
+  createRunReset: null,
   createRunRequest: ['run'],
   createRunSuccess: ['run'],
   createRunFailure: ['error'],
+
+  removeRunRequest: ['id'],
+  removeRunSuccess: ['id'],
+  removeRunFailure: ['error'],
 
   updateProfileReset: null,
   updateProfileRequest: ['user'],

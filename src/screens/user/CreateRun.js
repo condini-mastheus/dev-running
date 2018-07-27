@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
+import { Redirect } from 'react-router-dom'
 import { Form, Button, Segment } from 'semantic-ui-react'
 import InputMoment from 'input-moment'
 import 'input-moment/dist/input-moment.css'
@@ -55,13 +55,19 @@ class CreateRun extends Component {
     //   'distance': '100',
     //   'created': '2018-01-01 00:00:00'
     // }
-    if (this.props.auth.saved) {
-      return <Segment color='green'>Senha alterada com sucesso!</Segment>
+    if (this.props.runs.saved) {
+      return(
+        <div>
+          <Segment color='green'>Corrida criada com sucesso!</Segment>
+          <Redirect to={'/user/runs'} />
+        </div>
+      ) 
     }
+
     return (
       <div>
         <h1>Criar corrida</h1>
-
+        {!this.props.runs.saved &&
         <Form>
           <Form.Field>
             <label htmlFor="">Nome</label>
@@ -88,6 +94,7 @@ class CreateRun extends Component {
             <Button onClick={this.handleSave}>Criar corrida</Button>
           </Form.Field>
         </Form>
+        }
       </div>
     );
   }
@@ -95,7 +102,8 @@ class CreateRun extends Component {
 
 const mapStateToProps = state => {
   return {
-    auth: state.auth
+    auth: state.auth,
+    runs: state.runs
   };
 }
 
@@ -103,7 +111,7 @@ const mapDispatchToProps = dispatch => {
   return {
     // load: () => dispatch(ActionsCreators.getCreateRunRequest()),
     create: (run) => dispatch(ActionsCreators.createRunRequest(run)),
-    reset: () => dispatch(ActionsCreators.updateProfileReset())
+    reset: () => dispatch(ActionsCreators.createRunReset())
   };
 }
 

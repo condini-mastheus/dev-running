@@ -4,7 +4,7 @@ import { Types } from '../actionCreators'
 import ActionCreators from '../actionCreators'
 
 import { auth, checkAuth, destroyAuth, updateProfile, createProfile } from './authSaga'
-import { getRuns, createRun } from './runsSaga'
+import { getRuns, createRun, removeRun } from './runsSaga'
 
 export default function* rootSaga() {
   yield all([
@@ -15,6 +15,7 @@ export default function* rootSaga() {
     takeLatest(Types.DESTROY_AUTH_REQUEST, destroyAuth),
     takeLatest(Types.UPDATE_PROFILE_REQUEST, updateProfile),
     takeLatest(Types.CREATE_PROFILE_REQUEST, createProfile),
+    takeLatest(Types.REMOVE_RUN_REQUEST, removeRun),
     put(ActionCreators.authRequest())
   ])
   console.log('root saga');
