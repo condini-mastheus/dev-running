@@ -1,12 +1,11 @@
-import { put } from 'redux-saga/effects'
-import axios from 'axios'
+import { put, call } from 'redux-saga/effects'
 import jwtDecoder from 'jwt-decode'
 
 import ActionCreators from '../actionCreators'
 
-export function* auth(action) {
+export const auth = ({ api }) => function* (action) {
   try {
-    const login = yield axios.post('http://localhost:3001/users/login', {
+    const login = yield call(api.authUser, {
       email: action.email,
       passwd: action.password
     })
@@ -27,19 +26,12 @@ export function* auth(action) {
   }
 }
 
-export function* checkAuth() {
+export const checkAuth = ({ api }) => function* () {
   const token = localStorage.getItem('token')
 
   if (token) {
-    
-     // localStorage.setItem('user', user)
     try {
-      // const user = jwtDecoder(token)
-      const user = yield axios.get('http://localhost:3001/users/me', {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-      })
+      const user = yield call(api.getUser, 'me')
 
       yield put(ActionCreators.authSuccess(user.data))
     } catch (error) {
@@ -52,22 +44,15 @@ export function* checkAuth() {
 
 export function* destroyAuth() {
   localStorage.removeItem('token')
-  // localStorage.removeItem('user')
-
   yield put(ActionCreators.destroyAuthSuccess())
 }
 
-export function* updateProfile(action) {
-  const token = localStorage.getItem('token')
+export const updateProfile = ({ api }) => function* (action) {
   const userToSave = {
     ...action.user
   }
   try {
-    const user = yield axios.patch(`http://localhost:3001/users/${action.user.id}`, userToSave, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
+    const user = yield call(api.updateUser, userToSave)
 
     yield put(ActionCreators.updateProfileSuccess(user.data))
   } catch (error) {
@@ -75,12 +60,12 @@ export function* updateProfile(action) {
   }
 }
 
-export function* createProfile(action) {
+export const createProfile = ({ api }) => function* (action) {
   const userToSave = {
     ...action.user
   }
   try {
-    const user = yield axios.post('http://localhost:3001/users/', userToSave)
+    const user = yield call(api.createUser, userToSave)
 
     if(user.data && user.data.error) {
       yield put(ActionCreators.createProfileFailure(user.data.message))
